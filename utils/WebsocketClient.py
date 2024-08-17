@@ -27,6 +27,12 @@ class WebSocketClient:
         else:
             print("WebSocket is not connected.")
 
+    async def call_onebot_api(self, api, data):
+        await self.send_message(json.dumps({"action": api, "params": data, "echo":"sent"}))
+    
+    async def send_group_msg(self, group_id, message):
+        await self.call_onebot_api("send_group_msg", {"group_id": group_id, "message": message})
+
     def get_connection(self):
         return self.ws
 
