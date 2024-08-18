@@ -3,12 +3,16 @@ from utils.Config import FileConfig
 
 class EchoPlugin(Plugin):
     def __init__(self):
+        config = FileConfig("plugins/EchoPlugin/config.json").config
         self.name = "EchoPlugin"
         self.description = "输出收到的消息"
         self.author = "xiaozhou233"
         self.version = "1.0.0"
+        self.debugMode = config.get("debugMode")
+        
 
     async def on_message(self, message, ws_client):
+        
         if message.get("post_type") == "meta_event":
             self.meta_event_handle(message)
         elif message.get("post_type") == "message":
@@ -17,8 +21,12 @@ class EchoPlugin(Plugin):
             self.notice_handle(message)
         elif message.get("post_type") == "request":
             self.request_handle(message)
+        elif message.get("echo") and message.get("echo") == "sent":
+            print("[INFO] 已发送消息:", message.get("data").get("message_id"))
         else:
             print("收到未知消息:", message.get("post_type"))
+        if self.debugMode:
+            print("[Debug]", message)
     
     def meta_event_handle(self, message):
         match message.get("meta_event_type"):
